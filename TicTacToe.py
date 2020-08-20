@@ -5,7 +5,7 @@ import copy
 class TTT:
 	# things to add: ask player what mode they want (instead of constructor)
 	# who goes first (player, computer, or random)
-	def __init__(self): 
+	def __init__(self):
 		self.game_winner = False # no game winner yet
 
 		self.create_board() # makes the 2d array
@@ -32,11 +32,11 @@ class TTT:
 		while not self.game_over():
 			if self.mode == 'pvp':
 				if self.current % 2 == 0:
-					self.print_board() 
+					self.print_board()
 					self.player_turn(self.player_XO_1)
 					self.current += 1
 				else:
-					self.print_board() 
+					self.print_board()
 					self.player_turn(self.player_XO_2)
 					self.current += 1
 
@@ -45,10 +45,10 @@ class TTT:
 					self.computer_turn()
 					self.current += 1
 				else: # if player's turn
-					self.print_board() 
-					self.player_turn(self.player_XO_1) 
+					self.print_board()
+					self.player_turn(self.player_XO_1)
 					self.current += 1
-		self.game_over_message() 
+		self.game_over_message()
 
 
 	#sets x and o characters for player and computer
@@ -71,58 +71,74 @@ class TTT:
 				else:
 					raise Exception('Illegal character')
 			except:
-				print('Try again.')
+				pass
 
 
 	# sets the game to easy or hard difficulty
 	def get_mode(self):
 		while True: # difficulty
-			difficulty = input('Would you like to play easy, hard, or pvp?\n')
-			if difficulty[0].lower() == 'e':
-				self.mode = 'easy'
-				print(f'You chose easy. The computer will be {self.computer_XO}.')
-				break
-			elif difficulty[0].lower() == 'h':
-				self.mode = 'hard'
-				print(f'You chose hard. The computer will be {self.computer_XO}.')
-				break
-			elif difficulty[0].lower() == 'p':
-				self.mode = 'pvp'
-				print(f'You chose PVP. The other player will be {self.player_XO_2}.')
-				break
-			else:
-				print('Try again.')
+			try:
+				difficulty = input('Would you like to play easy, hard, or PvP?\n')
+				if difficulty[0].lower() == 'e':
+					self.mode = 'easy'
+					print(f'You chose easy. The computer will be {self.computer_XO}.')
+					break
+				elif difficulty[0].lower() == 'h':
+					self.mode = 'hard'
+					print(f'You chose hard. The computer will be {self.computer_XO}.')
+					break
+				elif difficulty[0].lower() == 'p':
+					self.mode = 'pvp'
+					print(f'You chose PvP. The other player will be {self.player_XO_2}.')
+					break
+				else:
+					raise Exception('Not a difficulty.')
+			except:
+				pass
 
 
 	# decides who will be first to play
 	def get_first(self):
-		while True: # which goes first
-			if self.mode[0] == 'p':
-				self.current = 1
-				print(f'{self.player_XO_1} will be first.')
-				break
-			else:
-				first = input('Who will begin? (player, computer, random)\n')
-				if first[0].lower() == 'p':
-					self.current = 1
-					print(f'The player, {self.player_XO_1}, will be first.')
-					break
-				elif first[0].lower() == 'c':
-					self.current = 0
-					print(f'The computer, {self.computer_XO}, will be first.')
-					break
-				elif first[0].lower() == 'r':
-					self.current = random.randint(0, 2)
-					print('You chose random...  ', end='')
-					if self.current == 0:
-						print(f'The computer, {self.computer_XO}, will be first.')
+		while True:
+			try:
+				# if we are in pvp mode, we will go through these options:
+				if self.mode[0] == 'p':
+					first_player = input('Who will start? (X or O)\n')
+					if first_player[0].upper() == self.player_XO_1:
+						self.current = 0
+						print(f'{self.player_XO_1} will start')
+						break
+					elif first_player[0].upper() == self.player_XO_2:
+						self.current = 1
+						print(f'{self.player_XO_2} will be first.')
+						break
 					else:
-						print(f'The player, {self.player_XO_1}, will be first.')
-					break
+						raise Exception('Illegal choice.')
+				# Otherwise, since we are playing against a computer, we will go through this sequence:
 				else:
-					print('Try again.')
+					first = input('Who will begin? (player, computer, random)\n')
+					if first[0].lower() == 'p':
+						self.current = 1
+						print(f'The player, {self.player_XO_1}, will be first.')
+						break
+					elif first[0].lower() == 'c':
+						self.current = 0
+						print(f'The computer, {self.computer_XO}, will be first.')
+						break
+					elif first[0].lower() == 'r':
+						self.current = random.randint(0, 2)
+						print('You chose random:  ', end='')
+						if self.current == 0:
+							print(f'The computer, {self.computer_XO}, will be first.')
+						else:
+							print(f'The player, {self.player_XO_1}, will be first.')
+						break
+					else:
+						raise Exception('Illegal choice.')
+			except:
+				pass
 
-			
+
 	# allows a player to choose a spot on the board to play
 	def player_turn(self, player_char):
 		while True:
@@ -155,14 +171,14 @@ class TTT:
 			pass
 		else:
 			self.take_turn()
-		
+
 
 	# see if computer a player can win, and take that move if possible
 	def check_winner(self, competitor):
 		for i in range(1, 10):
 			board = copy.deepcopy(self.board)
 			#[i for i in self.board]
-			
+
 			self.take_spot(i, competitor, board)
 			winner = self.find_win(board)
 			if winner == competitor:
@@ -268,14 +284,17 @@ class TTT:
 	# asks if player wants to play again, and resets everything if so
 	def play_again(self):
 		while True:
-			choice = input('Would you like to play again? (yes or no)\n')
-			if choice.lower()[0] == 'y':
-				self.create_board()
-				self.current = 1
-				self.play()
-				break
-			elif choice.lower()[0] == 'n':
-				break
+			try:
+				choice = input('Would you like to play again? (yes or no)\n')
+				if choice.lower()[0] == 'y':
+					self.create_board()
+					self.current = 1
+					self.play()
+					break
+				elif choice.lower()[0] == 'n':
+					break
+			except:
+				pass
 
 
 
