@@ -53,19 +53,24 @@ class TTT:
 
 	#sets x and o characters for player and computer
 	def get_XO(self):
-		while True: # character
+		while True: # decides what character each competitor will be
 			xo = input('Would you rather be X or O?\n')
-			if xo[0].upper() == 'X':
-				self.player_XO_1 = 'X'
-				self.computer_XO = 'O'
-				self.player_XO_2 = 'O'
-				break
-			elif xo[0].upper() == 'O':
-				self.player_XO_1 = 'O'
-				self.computer_XO = 'X'
-				self.player_XO_2 = 'X'
-				break
-			else:
+			try:
+				if xo[0].upper() == 'X':
+					self.player_XO_1 = 'X'
+					self.computer_XO = 'O'
+					self.player_XO_2 = 'O'
+					print('You chose X.')
+					break
+				elif xo[0].upper() == 'O':
+					self.player_XO_1 = 'O'
+					self.computer_XO = 'X'
+					self.player_XO_2 = 'X'
+					print('You chose O.')
+					break
+				else:
+					raise Exception('Illegal character')
+			except:
 				print('Try again.')
 
 
@@ -75,12 +80,15 @@ class TTT:
 			difficulty = input('Would you like to play easy, hard, or pvp?\n')
 			if difficulty[0].lower() == 'e':
 				self.mode = 'easy'
+				print(f'You chose easy. The computer will be {self.computer_XO}.')
 				break
 			elif difficulty[0].lower() == 'h':
 				self.mode = 'hard'
+				print(f'You chose hard. The computer will be {self.computer_XO}.')
 				break
 			elif difficulty[0].lower() == 'p':
 				self.mode = 'pvp'
+				print(f'You chose PVP. The other player will be {self.player_XO_2}.')
 				break
 			else:
 				print('Try again.')
@@ -91,18 +99,25 @@ class TTT:
 		while True: # which goes first
 			if self.mode[0] == 'p':
 				self.current = 1
+				print(f'{self.player_XO_1} will be first.')
 				break
 			else:
 				first = input('Who will begin? (player, computer, random)\n')
-
 				if first[0].lower() == 'p':
 					self.current = 1
+					print(f'The player, {self.player_XO_1}, will be first.')
 					break
 				elif first[0].lower() == 'c':
 					self.current = 0
+					print(f'The computer, {self.computer_XO}, will be first.')
 					break
 				elif first[0].lower() == 'r':
 					self.current = random.randint(0, 2)
+					print('You chose random...  ', end='')
+					if self.current == 0:
+						print(f'The computer, {self.computer_XO}, will be first.')
+					else:
+						print(f'The player, {self.player_XO_1}, will be first.')
 					break
 				else:
 					print('Try again.')
